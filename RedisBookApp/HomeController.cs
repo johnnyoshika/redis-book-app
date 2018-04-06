@@ -8,7 +8,14 @@ namespace RedisBookApp
 {
     public class HomeController : Controller
     {
+        public HomeController(IRepository repository)
+        {
+            Repository = repository;
+        }
+
+        IRepository Repository { get; }
+
         public async Task<IActionResult> Index() =>
-            Content("Hello world!");
+            View("~/Index.cshtml", await Repository.GetBooksAsync());
     }
 }

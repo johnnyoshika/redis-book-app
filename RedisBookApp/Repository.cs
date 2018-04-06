@@ -14,10 +14,38 @@ namespace RedisBookApp
 
     public class Repository : IRepository
     {
+        public Repository(IRedisConnection connection)
+        {
+            RedisDatabase = connection.Redis.GetDatabase();
+        }
+
+        IDatabase RedisDatabase { get; set; }
+
         public async Task<List<Book>> GetBooksAsync()
         {
-            return FromPersistentStore();
+            string key = "books";
+
+            var books = await FromCacheAsync(key);
+            if (books != null)
+                return books;
+
+            books = FromPersistentStore();
+            await ToCache(key, books, new TimeSpan(0, 0, 30));
+
+            return books;
         }
+
+        async Task<List<Book>> FromCacheAsync(string key)
+        {
+            string value = await RedisDatabase.StringGetAsync(key);
+            if (value == null)
+                return null;
+
+            return JsonConvert.DeserializeObject<List<Book>>(value);
+        }
+
+        async Task ToCache(string key, List<Book> books, TimeSpan expiresIn) =>
+            await RedisDatabase.StringSetAsync(key, JsonConvert.SerializeObject(books), expiresIn);
 
         List<Book> FromPersistentStore() =>
             new List<Book>

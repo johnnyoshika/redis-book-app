@@ -17,6 +17,7 @@ namespace RedisBookApp
         {
             services.AddMvc();
             services.AddScoped<IRepository, Repository>();
+            services.AddSingleton<IRedisConnection, RedisConnection>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -16,7 +16,12 @@
 * Clone this repo
 * Run in Visual Studio
 
-## View Redis Cache
+## View Redis Cache in Redis CLI
+* List all keys: `KEYS *`
+* After running the project, a `books` key should be inserted for 30 seconds. To view contents, run:
+    * `get books`
+
+## View Redis Cache in Redis Desktop Manager
 * Download and install [Redis Desktop Manager](https://redisdesktop.com/)
 * Connect with:
   * Address: localhost
